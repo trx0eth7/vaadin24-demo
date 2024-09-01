@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Route("channel")
-public class ChannelView extends VerticalLayout
+public class ChannelDetailsView extends VerticalLayout
         implements HasUrlParameter<String> {
 
     // service
@@ -29,7 +29,7 @@ public class ChannelView extends VerticalLayout
     private String channelId;
     private final List<Message> receivedMessages = new ArrayList<>();
 
-    public ChannelView(ChatService chatService) {
+    public ChannelDetailsView(ChatService chatService) {
         this.chatService = chatService;
         this.messageList = new MessageList();
 
@@ -51,7 +51,7 @@ public class ChannelView extends VerticalLayout
     @Override
     public void setParameter(BeforeEvent event, String channelId) {
         if (chatService.channel(channelId).isEmpty()) {
-            throw new IllegalArgumentException("Invalid channel id: " + channelId);
+            event.forwardTo(ChannelListView.class);
         }
         this.channelId = channelId;
     }
