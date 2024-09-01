@@ -6,18 +6,22 @@ import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import reactor.core.Disposable;
+import ru.trx.vaadindemo.channel.Channel;
 import ru.trx.vaadindemo.chat.ChatService;
 import ru.trx.vaadindemo.message.Message;
+import ru.trx.vaadindemo.view.MainLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Route("channel")
+@Route(value = "channel", layout = MainLayout.class)
 public class ChannelDetailsView extends VerticalLayout
-        implements HasUrlParameter<String> {
+        implements HasUrlParameter<String>, HasDynamicTitle {
 
     // service
     private final ChatService chatService;
@@ -27,6 +31,7 @@ public class ChannelDetailsView extends VerticalLayout
 
     // data fields
     private String channelId;
+    private String channelName;
     private final List<Message> receivedMessages = new ArrayList<>();
 
     public ChannelDetailsView(ChatService chatService) {
@@ -49,10 +54,20 @@ public class ChannelDetailsView extends VerticalLayout
     }
 
     @Override
+    public String getPageTitle() {
+        return channelName;
+    }
+
+    @Override
     public void setParameter(BeforeEvent event, String channelId) {
-        if (chatService.channel(channelId).isEmpty()) {
+        Optional<Channel> channel = chatService.channel(channelId);
+
+        if (channel.isEmpty()) {
             event.forwardTo(ChannelListView.class);
+            return;
         }
+
+        this.channelName = channel.get().getName();
         this.channelId = channelId;
     }
 
@@ -87,5 +102,4 @@ public class ChannelDetailsView extends VerticalLayout
     private MessageListItem mapToMessageListItem(Message message) {
         return new MessageListItem(message.getMessage(), message.getTimestamp(), message.getAuthor());
     }
-
 }

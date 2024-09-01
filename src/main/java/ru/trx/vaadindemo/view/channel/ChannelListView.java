@@ -2,6 +2,7 @@ package ru.trx.vaadindemo.view.channel;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -11,10 +12,12 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import ru.trx.vaadindemo.channel.Channel;
 import ru.trx.vaadindemo.chat.ChatService;
+import ru.trx.vaadindemo.view.MainLayout;
 
-@Route("")
+@Route(value = "", layout = MainLayout.class)
 @PageTitle("Lobby")
 public class ChannelListView extends VerticalLayout {
 
@@ -43,6 +46,8 @@ public class ChannelListView extends VerticalLayout {
         channelAddButton.setText("Add channel");
         channelAddButton.addClickListener(e -> addChannel());
         channelAddButton.setDisableOnClick(true);
+        channelAddButton.addClickShortcut(Key.ENTER);
+        channelAddButton.addClassName("primary");
 
         HorizontalLayout toolbar = new HorizontalLayout(channelNameField, channelAddButton);
         toolbar.setWidthFull();
