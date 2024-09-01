@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+    	mavenCentral()
+	    maven { setUrl("https://maven.vaadin.com/vaadin-prereleases") }
+			maven { setUrl("https://repo.spring.io/milestone") }
+		}
+}
+plugins {
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
+	id 'com.vaadin'
+}
+
+repositories {
+	mavenCentral()
+	maven { setUrl("https://maven.vaadin.com/vaadin-prereleases") }
+	maven { setUrl("https://repo.spring.io/milestone") }
+	maven { setUrl("https://maven.vaadin.com/vaadin-addons") }
+}
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+}
+
+dependencies {
+	implementation('com.vaadin:vaadin-core')
+	implementation('com.vaadin:vaadin-spring-boot-starter')
+	implementation('io.projectreactor:reactor-core')
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.projectlombok:lombok'
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	testImplementation 'org.springframework.security:spring-security-test'
+	annotationProcessor 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation('io.projectreactor:reactor-test')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "com.vaadin:vaadin-bom:$vaadinVersion"
+	}
+}
