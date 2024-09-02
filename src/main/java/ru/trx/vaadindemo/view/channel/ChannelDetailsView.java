@@ -15,13 +15,12 @@ import ru.trx.vaadindemo.chat.ChatService;
 import ru.trx.vaadindemo.message.Message;
 import ru.trx.vaadindemo.view.MainLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Route(value = "channel", layout = MainLayout.class)
 public class ChannelDetailsView extends VerticalLayout
         implements HasUrlParameter<String>, HasDynamicTitle {
+    private static final int HISTORY_SIZE = 20;
 
     // service
     private final ChatService chatService;
@@ -32,7 +31,12 @@ public class ChannelDetailsView extends VerticalLayout
     // data fields
     private String channelId;
     private String channelName;
-    private final List<Message> receivedMessages = new ArrayList<>();
+    private final Map<String, Message> receivedMessages = new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > HISTORY_SIZE;
+        }
+    };
 
     public ChannelDetailsView(ChatService chatService) {
         this.chatService = chatService;
@@ -83,20 +87,32 @@ public class ChannelDetailsView extends VerticalLayout
         }
     }
 
-    private void receiveMessage(List<Message> incomingMessages) {
+    private void receiveMessages(List<Message> incomingMessages) {
         getUI().ifPresent(ui -> {
-           ui.access(() -> {
-              receivedMessages.addAll(incomingMessages);
-              messageList.setItems(receivedMessages.stream()
-                      .map(this::mapToMessageListItem)
-                      .toList());
-           });
+            ui.access(() -> {
+                incomingMessages.forEach(message -> receivedMessages.put(message.getId(), message));
+                messageList.setItems(receivedMessages.values().stream()
+                        .map(this::mapToMessageListItem)
+                        .toList());
+            });
         });
     }
 
     private Disposable subscribe() {
-        return chatService.liveMessages(channelId)
-                .subscribe(this::receiveMessage);
+        Disposable subscription = chatService.liveMessages(channelId)
+                .subscribe(this::receiveMessages);
+
+        // TODO optimize searching last message
+        Iterator<String> rMessagesIter = receivedMessages.keySet().iterator();
+        String lastSeenMessageId = null;
+        while (rMessagesIter.hasNext()) {
+            lastSeenMessageId = rMessagesIter.next();
+        }
+
+        // TODO fix ordering
+        receiveMessages(chatService.messageHistory(channelId, HISTORY_SIZE, lastSeenMessageId));
+
+        return subscription;
     }
 
     private MessageListItem mapToMessageListItem(Message message) {

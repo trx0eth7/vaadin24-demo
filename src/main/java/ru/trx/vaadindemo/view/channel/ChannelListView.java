@@ -12,13 +12,12 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import ru.trx.vaadindemo.channel.Channel;
 import ru.trx.vaadindemo.chat.ChatService;
 import ru.trx.vaadindemo.view.MainLayout;
 
 @Route(value = "", layout = MainLayout.class)
-@PageTitle("Lobby")
+@PageTitle("Chats")
 public class ChannelListView extends VerticalLayout {
 
     // service

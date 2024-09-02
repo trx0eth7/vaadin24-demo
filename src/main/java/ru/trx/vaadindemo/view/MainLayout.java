@@ -36,13 +36,13 @@ public class MainLayout extends AppLayout {
 
         addToNavbar(false, header);
 
-        Span appName = new Span("Demo chat");
+        Span appName = new Span("Room chat");
         appName.addClassNames(LumoUtility.AlignItems.CENTER, LumoUtility.Display.FLEX,
                 LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.SEMIBOLD,
                 LumoUtility.Height.XLARGE, LumoUtility.Padding.Horizontal.MEDIUM);
 
         SideNav nav = new SideNav();
-        nav.addItem(new SideNavItem("Lobby", ChannelListView.class, VaadinIcon.BUILDING.create()));
+        nav.addItem(new SideNavItem("Chats", ChannelListView.class, VaadinIcon.BUILDING.create()));
 
         Scroller scroller = new Scroller(nav);
 
@@ -55,7 +55,6 @@ public class MainLayout extends AppLayout {
 
         // set up title
         Component content = getContent();
-
         String titleText = "";
 
         if (content instanceof HasDynamicTitle titleHolder) {
