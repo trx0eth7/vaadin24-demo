@@ -9,6 +9,7 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
 import reactor.core.Disposable;
 import ru.trx.vaadindemo.channel.Channel;
 import ru.trx.vaadindemo.chat.ChatService;
@@ -18,6 +19,7 @@ import ru.trx.vaadindemo.view.MainLayout;
 import java.util.*;
 
 @Route(value = "channel", layout = MainLayout.class)
+@PermitAll
 public class ChannelDetailsView extends VerticalLayout
         implements HasUrlParameter<String>, HasDynamicTitle {
     private static final int HISTORY_SIZE = 20;

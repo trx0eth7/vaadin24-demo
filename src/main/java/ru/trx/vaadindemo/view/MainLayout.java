@@ -3,6 +3,7 @@ package ru.trx.vaadindemo.view;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Span;
@@ -12,13 +13,20 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import ru.trx.vaadindemo.view.channel.ChannelListView;
 
 public class MainLayout extends AppLayout {
+
+    // bean
+    private final AuthenticationContext authenticationContext;
+
     private final H2 title;
 
-    public MainLayout() {
+    public MainLayout(AuthenticationContext authenticationContext) {
+        this.authenticationContext = authenticationContext;
+
         setPrimarySection(Section.DRAWER);
 
         DrawerToggle toggle = new DrawerToggle();
@@ -29,8 +37,10 @@ public class MainLayout extends AppLayout {
         title.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE,
                 LumoUtility.Flex.GROW);
 
+        Button logout = new Button("Logout " + authenticationContext.getPrincipalName().orElse(""),
+                event -> authenticationContext.logout());
 
-        Header header = new Header(toggle, title);
+        Header header = new Header(toggle, title, logout);
         header.addClassNames(LumoUtility.AlignItems.CENTER, LumoUtility.Display.FLEX,
                 LumoUtility.Padding.End.MEDIUM, LumoUtility.Width.FULL);
 

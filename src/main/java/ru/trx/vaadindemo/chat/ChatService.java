@@ -1,8 +1,10 @@
 package ru.trx.vaadindemo.chat;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
@@ -10,6 +12,7 @@ import ru.trx.vaadindemo.channel.Channel;
 import ru.trx.vaadindemo.channel.InMemoryChannelRepository;
 import ru.trx.vaadindemo.message.InMemoryMessageRepository;
 import ru.trx.vaadindemo.message.Message;
+import ru.trx.vaadindemo.security.Roles;
 
 import javax.annotation.Nullable;
 import java.time.Clock;
@@ -20,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@RolesAllowed(Roles.USER)
 public class ChatService {
     private static final Duration BUFFER_DURATION = Duration.ofMillis(500);
     private final Sinks.Many<Message> sink = Sinks.many().multicast().directBestEffort();
@@ -63,6 +67,7 @@ public class ChatService {
         return inMemoryChannelRepository.findAll();
     }
 
+    @RolesAllowed(Roles.ADMIN)
     public Channel createChannel(String channelName) {
         Channel channel = new Channel();
         channel.setName(channelName);
@@ -93,7 +98,7 @@ public class ChatService {
             throw new IllegalArgumentException("Channel not found: " + channelId);
         }
 
-        String author = "Alex Vasilev";
+        String author = SecurityContextHolder.getContext().getAuthentication().getName();
         Message copyMessage = new Message();
         Channel channel = new Channel();
 
